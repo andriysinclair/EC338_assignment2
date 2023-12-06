@@ -1,0 +1,83 @@
+---
+title: "Assignment2_markdown"
+author: "Andriy Sinclair"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+load("Assignment2_env.RData")
+
+library(haven)
+library(MASS)
+library(dplyr)
+library(modelsummary)
+library(knitr)
+library(broom)
+```
+
+## R Markdown
+
+1. What is the fraction of smokers amongst male and female workers in the dataset?
+```{r}
+fraction_smoker
+```
+2. Produce a table with summary statistics (mean, standard deviation, minimum and maximum values) for all individual characteristics in the dataset, separately for smokers and non-smokers. Briefly comment on your output.
+
+```{r}
+kable(individual_summary_females, format = "markdown")
+```
+
+```{r}
+kable(individual_summary_males, format = "markdown")
+```
+
+
+
+We draw the following insights from the sample:
+* The average age of smokers is higher than non-smokers, the youngest smoker and non-smoker are both 18, The oldest non-smoker is older than the oldest smoker. There is more variation in age among smokers.
+
+* A higher proportion of smokers dropped out of high school
+
+* A higher proportion of smokers have high school as their highest level of education
+
+* A higher proportion of smokers have some college as their highest level of education
+
+* A higher proportion of non-smokers graduate college.
+
+* Overall it appears non-smokers have higher educational attainment
+
+* A higher proportion of smokers are black
+
+* A higher percentage of non-smokers are hispanic
+
+* A higher percentage of non-smokers are female
+
+3. Test for differences in means of the variables colgrad and female across the
+groups of smokers and non-smokers. Briefly comment on your output. [Note: you
+can assume equal variances for the characteristics across the groups of smokers and
+non-smokers].
+
+```{r}
+tidyttest_colgrad <- tidy(mean_test_colgrad)
+tidyttest_colgrad <- dplyr::rename(tidyttest_colgrad, difference = estimate,
+                           smokers = estimate1, non_smokers = estimate2)
+
+tidyttest_female <- tidy(mean_test_female)
+tidyttest_female <- dplyr::rename(tidyttest_female, difference = estimate,
+                           smokers = estimate1, non_smokers = estimate2)
+
+tidyttest_colgrad <- t(tidyttest_colgrad)
+tidyttest_female <- t(tidyttest_female)
+
+tdf <- data.frame(tidyttest_colgrad, tidyttest_female)
+colnames(tdf) <- c("Colgrad", "Female")
+
+kable(tdf, format = "markdown",
+      caption = 'Difference in means for "colgrad" and "female" between smokers and non-smokers')
+
+```
+
+
+
